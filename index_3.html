@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#09090B">
+<title>Sarı Etiket — Akıllı Market Karşılaştırma</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏷️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+:root{--f:'Outfit',system-ui,sans-serif;--bg:#09090B;--c1:#0F0F12;--c2:#16161A;--c3:#1E1E24;--c4:#2A2A32;--bd:rgba(255,255,255,.06);--t1:#F4F4F5;--t2:#A1A1AA;--t3:#52525B;--t4:#3F3F46;--gold:#FACC15;--gold2:#EAB308;--gold3:#A16207;--gbg:rgba(250,204,21,.05);--gbd:rgba(250,204,21,.12);--grn:#34D399;--grn2:#059669;--gnbg:rgba(52,211,153,.06);--red:#FB7185;--rnbg:rgba(251,113,133,.06);--blue:#60A5FA;--r:14px;--rs:10px}
+html,body{height:100%;overflow:hidden;font-family:var(--f);background:var(--bg);color:var(--t1);position:fixed;width:100%}
+::-webkit-scrollbar{width:0;display:none}
+.app{max-width:430px;margin:0 auto;height:100%;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
+
+/* HEADER */
+.hdr{padding:max(env(safe-area-inset-top),6px) 14px 0;flex-shrink:0;background:var(--c1);border-bottom:1px solid var(--bd)}
+.h1{display:flex;align-items:center;justify-content:space-between;padding:6px 0 10px}
+.logo{display:flex;align-items:center;gap:7px}
+.logo svg{width:22px;height:22px}
+.logo span{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.logo b{color:var(--gold)}
+.hbtns{display:flex;gap:5px}
+.hb{width:36px;height:36px;border-radius:var(--rs);background:var(--c2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.hb:active{transform:scale(.92)}
+.hb svg{width:17px;height:17px;stroke:var(--t2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;border-radius:8px;background:var(--gold);color:#000;font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px}
+.badge.on{display:flex}
+.srch{display:flex;gap:6px;padding-bottom:10px}
+.srch input{flex:1;height:44px;border-radius:var(--rs);border:1px solid var(--bd);padding:0 12px;font-size:14px;font-family:var(--f);font-weight:500;background:var(--c2);color:var(--t1);outline:none;transition:.15s}
+.srch input:focus{border-color:var(--gold)}
+.srch input::placeholder{color:var(--t4)}
+.srch button{width:44px;height:44px;border-radius:var(--rs);background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.srch button:active{transform:scale(.92)}
+.srch button svg{width:18px;height:18px;stroke:#000;fill:none;stroke-width:2.5}
+
+/* CATS */
+.cats{display:flex;gap:4px;padding:0 14px 8px;overflow-x:auto;scrollbar-width:none}
+.cat{flex-shrink:0;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;color:var(--t3);background:var(--c2);border:1px solid var(--bd);cursor:pointer;white-space:nowrap;transition:.12s}
+.cat:active{transform:scale(.95)}
+.cat.on{background:var(--gbg);color:var(--gold);border-color:var(--gbd)}
+
+/* BODY */
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,16px)}
+
+/* MARKET FILTER */
+.mf{display:flex;gap:4px;padding:8px 14px 4px;overflow-x:auto;scrollbar-width:none}
+.mfb{flex-shrink:0;padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;color:var(--t3);background:var(--c2);border:1px solid var(--bd);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.mfb:active{transform:scale(.95)}
+.mfb.on{border-color:var(--gbd);color:var(--t1)}
+.mfd{width:7px;height:7px;border-radius:4px;flex-shrink:0}
+
+/* QUICK TAGS */
+.qtags{display:flex;gap:5px;padding:10px 14px 6px;overflow-x:auto;scrollbar-width:none}
+.qt{flex-shrink:0;padding:7px 11px;border-radius:8px;background:var(--c2);border:1px solid var(--bd);display:flex;align-items:center;gap:5px;cursor:pointer}
+.qt:active{transform:scale(.95)}
+.qt em{font-size:14px;font-style:normal}
+.qt span{font-size:11px;font-weight:600;color:var(--t2);white-space:nowrap}
+
+/* HOME */
+.sec{padding:8px 14px 0}
+.sec-t{font-size:10px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.hc{background:var(--c2);border:1px solid var(--bd);border-radius:var(--rs);padding:14px 4px;text-align:center;cursor:pointer;transition:.12s}
+.hc:active{transform:scale(.95);background:var(--c3)}
+.hc em{font-size:24px;display:block;margin-bottom:3px;font-style:normal}
+.hc span{font-size:9px;font-weight:600;color:var(--t3)}
+.foot{text-align:center;padding:16px 14px;font-size:10px;color:var(--t4);line-height:1.5}
+
+/* RESULTS */
+.rh{padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between}
+.rh span{font-size:12px;font-weight:600;color:var(--t3)}
+.rh small{font-size:10px;color:var(--t4)}
+
+/* PRODUCT CARD */
+.pl{padding:0 10px;display:flex;flex-direction:column;gap:6px}
+.pc{background:var(--c2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;animation:fi .2s ease both}
+.pc.op{border-color:var(--gbd)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pc:nth-child(2){animation-delay:.02s}.pc:nth-child(3){animation-delay:.04s}.pc:nth-child(4){animation-delay:.06s}.pc:nth-child(5){animation-delay:.08s}.pc:nth-child(6){animation-delay:.1s}
+.pr{display:flex;align-items:center;gap:9px;padding:10px;cursor:pointer}
+.pi{width:48px;height:48px;border-radius:10px;background:var(--c3);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pi img{width:100%;height:100%;object-fit:contain}
+.pm{flex:1;min-width:0}
+.pn{font-size:12px;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ps{font-size:9px;color:var(--t3);margin-top:2px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.ps .disc{color:var(--red);font-weight:700}
+.ps .date{color:var(--t4)}
+.prt{text-align:right;flex-shrink:0}
+.pp{font-size:16px;font-weight:900;color:var(--grn)}
+.pmk{font-size:9px;font-weight:700;margin-top:1px}
+.prg{font-size:8px;color:var(--t4);margin-top:1px}
+.pa{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:3px;font-size:15px;font-weight:700}
+.pa.p{background:var(--gbg);color:var(--gold);border:1px solid var(--gbd)}
+.pa.d{background:var(--grn);color:#000;border:none}
+.pa:active{transform:scale(.82)}
+
+/* DETAIL */
+.pd{padding:6px 10px 10px;border-top:1px solid var(--bd)}
+.pdg{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:4px}
+.pdc{padding:7px 3px;border-radius:7px;background:var(--c3);text-align:center;border:1px solid transparent}
+.pdc.b{background:var(--gnbg);border-color:rgba(52,211,153,.12)}
+.pdm{font-size:8px;font-weight:800;color:var(--t4);margin-bottom:2px}
+.pdc.b .pdm{color:var(--grn2)}
+.pdp{font-size:11px;font-weight:800}
+.pdc.b .pdp{color:var(--grn)}
+.pdd{font-size:7px;font-weight:600;color:var(--t4);margin-top:1px}
+.pdc.b .pdd{color:var(--grn2)}
+.pdsv{text-align:center;margin-top:6px;font-size:10px;font-weight:700;color:var(--grn);background:var(--gnbg);padding:5px;border-radius:6px}
+
+/* LOADING */
+.ld{display:flex;flex-direction:column;align-items:center;padding:50px 20px;gap:14px}
+.ldr{width:28px;height:28px;border:2.5px solid var(--c4);border-top-color:var(--gold);border-radius:50%;animation:sp .55s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ldt{font-size:12px;color:var(--t3)}
+.emp{text-align:center;padding:40px 20px}
+.emp em{font-size:36px;display:block;margin-bottom:8px;font-style:normal}
+.emp b{font-size:13px;font-weight:700;color:var(--t2);display:block;margin-bottom:3px}
+.emp span{font-size:11px;color:var(--t3)}
+
+/* CART OVERLAY */
+.cov{display:none;position:absolute;inset:0;z-index:50;background:var(--bg);flex-direction:column}
+.cov.sh{display:flex}
+.covh{padding:max(env(safe-area-inset-top),6px) 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd);background:var(--c1)}
+.covbk{width:34px;height:34px;border-radius:8px;background:var(--c2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.covbk svg{width:16px;height:16px;stroke:var(--t2);fill:none;stroke-width:2;stroke-linecap:round}
+.covt{font-size:15px;font-weight:800;flex:1}
+.covn{font-size:11px;color:var(--gold);font-weight:700}
+.covbdy{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+.covft{position:absolute;bottom:0;left:0;right:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:var(--c1);border-top:1px solid var(--bd);display:flex;gap:6px}
+.cb{flex:1;height:42px;border-radius:var(--rs);border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:5px}
+.cb:active{transform:scale(.97)}
+.cbg{background:var(--c2);color:var(--t2);border:1px solid var(--bd)}
+.cby{background:var(--gold);color:#000}
+.ci{display:flex;align-items:center;gap:7px;padding:8px;background:var(--c2);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:4px}
+.ci img{width:32px;height:32px;border-radius:7px;object-fit:contain;background:var(--c3)}
+.cii{flex:1;min-width:0}
+.cin{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cim{font-size:9px;color:var(--t3);margin-top:1px}
+.cip{font-size:12px;font-weight:800;flex-shrink:0}
+.cix{width:22px;height:22px;border-radius:6px;background:var(--rnbg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px}
+.cix svg{width:10px;height:10px;stroke:var(--red);fill:none;stroke-width:2.5;stroke-linecap:round}
+.csum{margin:6px 10px;padding:14px;border-radius:var(--r);background:var(--c2);border:1px solid var(--bd);position:relative}
+.csum::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--grn));border-radius:var(--r) var(--r) 0 0}
+.csr{display:flex;justify-content:space-between;align-items:center;padding:2px 0}
+.csl{font-size:10px;color:var(--t3)}
+.csv{font-size:11px;font-weight:700;color:var(--t2)}
+.cst{border-top:1px solid var(--bd);margin-top:6px;padding-top:6px}
+.cst .csl{font-size:12px;font-weight:700;color:var(--t1)}
+.cst .csv{font-size:18px;font-weight:900;color:var(--gold)}
+.cemp{text-align:center;padding:60px 20px}
+.cemp em{font-size:40px;display:block;margin-bottom:8px;font-style:normal;opacity:.3}
+.cemp b{font-size:14px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px}
+.cemp span{font-size:11px;color:var(--t3);display:block;margin-bottom:14px}
+.cemp button{padding:9px 20px;border-radius:8px;background:var(--gold);color:#000;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:var(--f)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(36px);background:var(--t1);color:#000;padding:8px 18px;border-radius:10px;font-size:11px;font-weight:600;z-index:999;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap;font-family:var(--f)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+<div class="h1">
+<div class="logo"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="8" width="16" height="12" rx="2" fill="#FACC15"/><path d="M8 8V6a4 4 0 018 0v2" stroke="#FACC15" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="14" r="1.5" fill="#09090B"/></svg><span>sarı<b>etiket</b></span></div>
+<div class="hbtns"><div class="hb" onclick="OC()"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="badge" id="bdg">0</span></div></div>
+</div>
+<div class="srch"><input id="inp" placeholder="Ürün ara..." enterkeyhint="search" autocomplete="off"><button onclick="go()"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button></div>
+<div class="cats" id="cats"></div>
+</div>
+<div class="body" id="bd">
+<div class="mf" id="mf"></div>
+<div class="qtags" id="qt"></div>
+<div id="ct"></div>
+</div>
+<div class="cov" id="cov">
+<div class="covh"><div class="covbk" onclick="CC()"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div><div class="covt">Sepetim</div><div class="covn" id="cn">0</div></div>
+<div class="covbdy" id="cvb"></div>
+<div class="covft"><button class="cb cbg" onclick="CC()">← Geri</button><button class="cb cby" onclick="SL()">📤 Paylaş</button></div>
+</div>
+</div>
+<div class="toast" id="tst"></div>
+<script>
+const API='https://api.marketfiyati.org.tr/api/v2/search';
+const PX=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://corsproxy.io/?'+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
+const LAT=41.0082,LNG=28.9784;
+const MN={'a101':'A101','bim':'BİM','sok':'ŞOK','migros':'Migros','carrefour':'CarrefourSA','tarim_kredi':'Tarım Kredi','hakmar':'Hakmar'};
+const MC={'A101':'#EF4444','BİM':'#60A5FA','ŞOK':'#FB923C','Migros':'#FBBF24','CarrefourSA':'#818CF8','Tarım Kredi':'#34D399','Hakmar':'#C084FC'};
+const CATS=[{n:'Tümü',i:'🏪'},{n:'Meyve ve Sebze',i:'🥬'},{n:'Et, Tavuk ve Balık',i:'🥩'},{n:'Süt Ürünleri ve Kahvaltılık',i:'🧀'},{n:'Temel Gıda',i:'🍞'},{n:'İçecek',i:'🥤'},{n:'Atıştırmalık ve Tatlı',i:'🍫'},{n:'Temizlik ve Kişisel Bakım Ürünleri',i:'🧴'}];
+const PP=[{n:'Süt',e:'🥛'},{n:'Ekmek',e:'🍞'},{n:'Yumurta',e:'🥚'},{n:'Domates',e:'🍅'},{n:'Peynir',e:'🧀'},{n:'Tavuk',e:'🍗'},{n:'Makarna',e:'🍝'},{n:'Pirinç',e:'🍚'},{n:'Yağ',e:'🫒'},{n:'Deterjan',e:'🧴'},{n:'Çikolata',e:'🍫'},{n:'Su',e:'💧'},{n:'Şampuan',e:'🧴'},{n:'Çay',e:'🍵'},{n:'Kahve',e:'☕'},{n:'Cips',e:'🥔'}];
+const $=id=>document.getElementById(id);
+const fp=p=>parseFloat(p).toFixed(2).replace('.',',')+' ₺';
+const mn=id=>{for(const[k,v]of Object.entries(MN))if((id||'').includes(k))return v;return id||'?'};
+const mc=m=>MC[m]||'#34D399';
+let S={ps:[],cart:JSON.parse(localStorage.getItem('se8')||'[]'),exp:null,ld:false,sd:false,cat:'Tümü',mkt:'all'};
+function toast(m){const t=$('tst');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+function sv(){localStorage.setItem('se8',JSON.stringify(S.cart))}
+function ub(){const n=S.cart.length;$('bdg').textContent=n;$('bdg').classList.toggle('on',n>0)}
+
+async function fetchAPI(kw,size=30){
+  const body=JSON.stringify({keywords:kw,latitude:LAT,longitude:LNG,size});
+  // Direct
+  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:AbortSignal.timeout(4000)});if(r.ok){const d=await r.json();if(d.content?.length)return norm(d.content)}}catch(e){}
+  // Proxies POST
+  for(const px of PX){try{const r=await fetch(px(API),{method:'POST',headers:{'Content-Type':'application/json'},body,signal:AbortSignal.timeout(7000)});if(r.ok){const d=await r.json();if(d.content?.length)return norm(d.content)}}catch(e){}}
+  return[];
+}
+
+function norm(content){
+  return content.map(item=>{
+    const deps=item.productDepotInfoList||[];
+    const byM={};
+    deps.forEach(d=>{
+      const name=mn(d.marketAdi);
+      if(!byM[name]||d.price<byM[name].price)byM[name]={market:name,price:d.price,depot:d.depotName,discount:d.discount,discountRatio:d.discountRatio,promo:d.promotionText,date:d.indexTime};
+    });
+    return{id:item.id,name:item.title,brand:item.brand||'',img:item.imageUrl||'',unit:item.refinedVolumeOrWeight||item.refinedQuantityUnit||'',cat:item.menu_category||'',subcat:item.main_category||'',prices:Object.values(byM).filter(p=>p.price>0)};
+  }).filter(p=>p.prices.length>0);
+}
+
+async function go(){const v=$('inp').value.trim();if(!v)return;S.ld=true;S.sd=true;S.exp=null;S.ps=[];rP();S.ps=await fetchAPI(v);S.ld=false;rP()}
+function qs(t){$('inp').value=t;go();$('bd').scrollTo({top:0,behavior:'smooth'})}
+function setCat(c){S.cat=c;rCats();if(c==='Tümü'){S.sd=false;S.ps=[];rP()}else qs(c)}
+function setMkt(m){S.mkt=m;rMF();rP()}
+function tg(id){S.exp=S.exp===id?null:id;rP()}
+
+function rCats(){$('cats').innerHTML=CATS.map(c=>`<div class="cat ${S.cat===c.n?'on':''}" onclick="setCat('${c.n}')">${c.i} ${c.n==='Tümü'?'Tümü':c.n.split(' ')[0]}</div>`).join('')}
+function rMF(){
+  const markets=['all',...Object.values(MN)];
+  $('mf').innerHTML=markets.map(m=>`<div class="mfb ${S.mkt===m?'on':''}" onclick="setMkt('${m}')">${m==='all'?'':'<span class="mfd" style="background:'+mc(m)+'"></span>'}${m==='all'?'Tüm Marketler':m}</div>`).join('');
+}
+function rQT(){$('qt').innerHTML=PP.map(p=>`<div class="qt" onclick="qs('${p.n}')"><em>${p.e}</em><span>${p.n}</span></div>`).join('')}
+
+function rHome(){
+  $('ct').innerHTML=`<div class="sec"><div class="sec-t">Popüler aramalar</div><div class="hgrid">${PP.map(p=>`<div class="hc" onclick="qs('${p.n}')"><em>${p.e}</em><span>${p.n}</span></div>`).join('')}</div></div><div class="foot">7 zincir marketten güncel fiyatlar<br><span style="opacity:.4">Açık veri kaynağı: marketfiyati.org.tr</span></div>`;
+}
+
+function rP(){
+  const el=$('ct');
+  if(S.ld){el.innerHTML='<div class="ld"><div class="ldr"></div><div class="ldt">Fiyatlar yükleniyor...</div></div>';return}
+  if(!S.sd){rHome();return}
+  let ps=S.ps;
+  if(S.mkt!=='all')ps=ps.filter(p=>p.prices.some(pr=>pr.market===S.mkt));
+  if(!ps.length){el.innerHTML='<div class="emp"><em>🔍</em><b>Sonuç bulunamadı</b><span>Farklı ürün veya market seçin</span></div>';return}
+  let h=`<div class="rh"><span>${ps.length} ürün</span><small>Güncelleme: bugün</small></div><div class="pl">`;
+  ps.forEach(p=>{
+    let prices=p.prices;
+    if(S.mkt!=='all')prices=prices.filter(pr=>pr.market===S.mkt);
+    const so=[...prices].sort((a,b)=>a.price-b.price);if(!so.length)return;
+    const bs=so[0],ws=so[so.length-1],op=S.exp===p.id,ic=S.cart.some(c=>c.id===p.id),sv2=ws.price-bs.price;
+    const hasDisc=prices.some(pr=>pr.discount);
+    const date=bs.date?bs.date.split(' ')[0]:'';
+
+    h+=`<div class="pc ${op?'op':''}" onclick="tg('${p.id}')"><div class="pr"><div class="pi">${p.img?`<img src="${p.img}" loading="lazy" onerror="this.style.display='none'">`:'🛒'}</div><div class="pm"><div class="pn">${p.name}</div><div class="ps">${p.brand?'<span>'+p.brand+'</span>':''}${p.unit?'<span>'+p.unit+'</span>':''}${hasDisc?'<span class="disc">İNDİRİM</span>':''}${date?'<span class="date">'+date+'</span>':''}</div></div><div class="prt"><div class="pp">${fp(bs.price)}</div><div class="pmk" style="color:${mc(bs.market)}">${bs.market}</div>${so.length>1?`<div class="prg">${fp(bs.price)}–${fp(ws.price)}</div>`:''}</div><button class="pa ${ic?'d':'p'}" onclick="event.stopPropagation();ct('${p.id}')">${ic?'✓':'+'}</button></div>`;
+
+    if(op){
+      h+=`<div class="pd"><div class="pdg">${so.map(pr=>{const ib=pr.price===bs.price;return`<div class="pdc ${ib?'b':''}"><div class="pdm" style="color:${mc(pr.market)}">${pr.market}${pr.discount?' 🏷':''}${pr.promo?'<br>'+pr.promo:''}</div><div class="pdp">${fp(pr.price)}</div><div class="pdd">${ib?'En ucuz':'+'+fp(pr.price-bs.price)}</div></div>`}).join('')}</div>${sv2>1?`<div class="pdsv">💰 ${fp(sv2)} tasarruf</div>`:''}</div>`;
+    }
+    h+='</div>';
+  });
+  h+='</div>';el.innerHTML=h;
+}
+
+function ct(id){const i=S.cart.findIndex(c=>c.id===id);if(i>-1){S.cart.splice(i,1);toast('Çıkarıldı')}else{const p=S.ps.find(x=>x.id===id);if(p){S.cart.push({...p});toast('Eklendi ✓')}}sv();ub();rP()}
+function rm(id){S.cart=S.cart.filter(c=>c.id!==id);sv();ub();rC()}
+function OC(){$('cov').classList.add('sh');rC()}
+function CC(){$('cov').classList.remove('sh')}
+
+function rC(){
+  const el=$('cvb');$('cn').textContent=S.cart.length+' ürün';
+  if(!S.cart.length){el.innerHTML='<div class="cemp"><em>🛒</em><b>Sepet boş</b><span>Ürün arayıp + ile ekleyin</span><button onclick="CC()">Ürün Ara →</button></div>';return}
+  let tB=0,tW=0;
+  S.cart.forEach(it=>{const s=[...it.prices].sort((a,b)=>a.price-b.price);tB+=s[0].price;tW+=s[s.length-1].price});
+  const svd=tW-tB;
+  let h='<div style="padding:8px 8px 0">';
+  S.cart.forEach(it=>{const s=[...it.prices].sort((a,b)=>a.price-b.price);const b=s[0];
+    h+=`<div class="ci">${it.img?`<img src="${it.img}">`:'<div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px">🛒</div>'}<div class="cii"><div class="cin">${it.name}</div><div class="cim" style="color:${mc(b.market)}">En ucuz: ${b.market}</div></div><span class="cip">${fp(b.price)}</span><button class="cix" onclick="rm('${it.id}')"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>`});
+  h+='</div>';
+  h+=`<div class="csum"><div class="csr"><span class="csl">En pahalı</span><span class="csv" style="text-decoration:line-through;opacity:.4">${fp(tW)}</span></div><div class="csr"><span class="csl">En ucuz</span><span class="csv" style="color:var(--grn)">${fp(tB)}</span></div>${svd>0?`<div class="csr cst"><span class="csl">Tasarruf</span><span class="csv">${fp(svd)} 🎉</span></div>`:''}</div>`;
+  el.innerHTML=h;
+}
+
+function SL(){
+  if(!S.cart.length)return;let t='🏷️ Sarı Etiket\n━━━━━━━━━━━━━━━\n';let tot=0;
+  S.cart.forEach(i=>{const s=[...i.prices].sort((a,b)=>a.price-b.price);const b=s[0];tot+=b.price;t+=`• ${i.name} — ${fp(b.price)} (${b.market})\n`});
+  t+=`━━━━━━━━━━━━━━━\n💵 Toplam: ${fp(tot)}`;
+  if(navigator.share)navigator.share({title:'Sarı Etiket',text:t}).catch(()=>{});
+  else{navigator.clipboard?.writeText(t);toast('Kopyalandı ✓')}
+}
+
+(function(){rCats();rMF();rQT();rHome();ub();$('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go()}})})();
+</script>
+</body>
+</html>
