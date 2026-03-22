@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#F59E0B">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Sarı Etiket — Market Fiyat Karşılaştırma</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiU2FyxLEgRXRpa2V0Iiwic2hvcnRfbmFtZSI6IlNhcsSxIEV0aWtldCIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRjU5RTBCIiwidGhlbWVfY29sb3IiOiIjRjU5RTBCIn0=">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+--y50:#FFFBEB;--y100:#FEF3C7;--y200:#FDE68A;--y300:#FCD34D;--y400:#FBBF24;--y500:#F59E0B;--y600:#D97706;--y700:#B45309;--y800:#92400E;
+--s50:#F8FAFC;--s100:#F1F5F9;--s200:#E2E8F0;--s300:#CBD5E1;--s400:#94A3B8;--s500:#64748B;--s600:#475569;--s700:#334155;--s800:#1E293B;--s900:#0F172A;
+--g50:#F0FDF4;--g100:#DCFCE7;--g500:#22C55E;--g600:#16A34A;--g700:#15803D;--g800:#166534;
+--r500:#EF4444;--r600:#DC2626;
+--radius:14px;--radius-sm:10px;--radius-xs:8px;
+--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+--shadow-md:0 4px 12px rgba(0,0,0,0.07);
+--shadow-lg:0 8px 30px rgba(0,0,0,0.1);
+}
+html{font-size:16px;height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F3EE;color:var(--s800);height:100%;overflow:hidden;position:fixed;width:100%}
+.app{max-width:500px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:#F5F3EE;position:relative;overflow:hidden}
+
+/* HEADER */
+.header{background:linear-gradient(145deg,#FBBF24 0%,#F59E0B 50%,#D97706 100%);padding:max(env(safe-area-inset-top),12px) 20px 14px;flex-shrink:0;position:relative;z-index:50}
+.header::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:20px;background:linear-gradient(to bottom,rgba(245,158,11,0.08),transparent);pointer-events:none}
+.header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:38px;height:38px;background:var(--s900);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.brand-icon svg{width:22px;height:22px}
+.brand-name{font-family:'Fraunces',serif;font-size:24px;font-weight:800;color:var(--s900);letter-spacing:-0.5px}
+.header-btns{display:flex;gap:6px}
+.h-btn{width:38px;height:38px;border-radius:10px;background:rgba(0,0,0,0.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative;backdrop-filter:blur(4px)}
+.h-btn:active{transform:scale(0.93)}
+.h-btn svg{width:20px;height:20px;stroke:var(--s900);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cart-badge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--r500);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--y400)}
+
+/* SEARCH */
+.search-box{position:relative}
+.search-box input{width:100%;height:48px;border-radius:14px;border:none;padding:0 48px 0 18px;font-size:15px;font-family:inherit;background:rgba(255,255,255,0.92);color:var(--s800);outline:none;transition:all .2s;font-weight:500;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.search-box input:focus{background:#fff;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
+.search-box input::placeholder{color:var(--s400);font-weight:400}
+.search-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:10px;background:var(--s900);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.search-btn:active{transform:translateY(-50%) scale(0.93)}
+.search-btn svg{width:18px;height:18px;stroke:#FBBF24;fill:none;stroke-width:2}
+
+/* SCROLLABLE CONTENT */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,0)}
+
+/* MARKET CAROUSEL */
+.markets-section{padding:16px 0 8px}
+.sec-label{padding:0 20px;font-size:12px;font-weight:700;color:var(--s400);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--s200)}
+.market-scroll{display:flex;gap:10px;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.market-scroll::-webkit-scrollbar{display:none}
+.market-card{flex-shrink:0;width:90px;padding:12px 8px;border-radius:var(--radius);background:#fff;border:1.5px solid var(--s200);text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.market-card:active{transform:scale(0.96)}
+.market-card.active{border-color:var(--y400);background:var(--y50);box-shadow:0 0 0 3px rgba(251,191,36,0.15)}
+.market-card.all-card{background:var(--s900);border-color:var(--s900);color:#fff}
+.market-card.all-card .m-label{color:#fff}
+.market-card.all-card.active{box-shadow:0 0 0 3px rgba(15,23,42,0.2)}
+.m-logo{width:36px;height:36px;border-radius:8px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;line-height:1}
+.m-label{font-size:11px;font-weight:600;color:var(--s700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* PRODUCT GRID */
+.products-section{padding:8px 0}
+.product-grid{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+
+.p-card{background:#fff;border-radius:var(--radius);border:1px solid var(--s200);overflow:hidden;transition:all .25s;cursor:pointer}
+.p-card:active{transform:scale(0.985)}
+.p-card.expanded{border-color:var(--y300);box-shadow:var(--shadow-md)}
+.p-head{display:flex;align-items:center;gap:12px;padding:14px 14px}
+.p-img{width:56px;height:56px;border-radius:var(--radius-sm);background:var(--s100);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.p-info{flex:1;min-width:0}
+.p-name{font-size:14px;font-weight:600;color:var(--s800);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.p-sub{font-size:12px;color:var(--s400);margin-top:2px}
+.p-price-col{text-align:right;flex-shrink:0}
+.p-best{font-size:18px;font-weight:800;color:var(--g700)}
+.p-best-market{font-size:10px;font-weight:600;color:var(--g600);margin-top:1px}
+.p-range{font-size:11px;color:var(--s400);margin-top:2px}
+.p-add{width:32px;height:32px;border-radius:var(--radius-xs);border:1.5px solid var(--y400);background:var(--y50);color:var(--y700);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;margin-left:6px}
+.p-add:active{transform:scale(0.9)}
+.p-add.added{background:var(--g500);border-color:var(--g500);color:#fff}
+
+/* PRICE COMPARISON PANEL */
+.price-panel{padding:0 14px 14px;border-top:1px dashed var(--s200);margin-top:0}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:6px;margin-top:10px}
+.pg-item{padding:8px;border-radius:var(--radius-xs);background:var(--s50);text-align:center;border:1px solid transparent;transition:all .2s}
+.pg-item.best{background:var(--g50);border-color:var(--g500)}
+.pg-market{font-size:10px;font-weight:700;margin-bottom:3px;letter-spacing:0.3px}
+.pg-price{font-size:14px;font-weight:700;color:var(--s700)}
+.pg-item.best .pg-price{color:var(--g700)}
+.pg-diff{font-size:10px;color:var(--s400);margin-top:1px}
+.pg-item.best .pg-diff{color:var(--g600);font-weight:600}
+
+/* LOADING & EMPTY */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px}
+.spinner{width:36px;height:36px;border:3px solid var(--s200);border-top-color:var(--y500);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--s400);text-align:center}
+
+.empty{text-align:center;padding:50px 30px}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:.5}
+.empty-title{font-size:16px;font-weight:600;color:var(--s600);margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--s400);line-height:1.5}
+
+/* CART VIEW */
+.cart-view{display:none;flex-direction:column;height:100%}
+.cart-view.show{display:flex}
+.main-view.hide{display:none}
+.cart-header{background:var(--s900);padding:max(env(safe-area-inset-top),12px) 20px 16px;flex-shrink:0}
+.cart-back{display:flex;align-items:center;gap:10px;background:none;border:none;color:#fff;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;padding:0}
+.cart-back svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2}
+.cart-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(80px + env(safe-area-inset-bottom,0))}
+.cart-empty{text-align:center;padding:80px 30px}
+.cart-empty-icon{font-size:60px;margin-bottom:16px;opacity:.4}
+.cart-empty-text{font-size:16px;color:var(--s500);margin-bottom:8px;font-weight:600}
+.cart-empty-sub{font-size:13px;color:var(--s400);line-height:1.5}
+.cart-go-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 24px;border-radius:var(--radius);background:var(--y400);color:var(--s900);font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+
+.cart-items{padding:16px}
+.ci{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border-radius:var(--radius);margin-bottom:8px;box-shadow:var(--shadow)}
+.ci-emoji{font-size:24px;flex-shrink:0}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:13px;font-weight:600;color:var(--s800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-market{font-size:11px;color:var(--s400);margin-top:1px}
+.ci-price{font-size:15px;font-weight:700;color:var(--s800);flex-shrink:0}
+.ci-del{width:28px;height:28px;border-radius:7px;background:rgba(239,68,68,0.08);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:6px}
+.ci-del svg{width:14px;height:14px;stroke:var(--r500);fill:none;stroke-width:2}
+
+.cart-summary{margin:8px 16px 16px;padding:16px;border-radius:var(--radius);background:linear-gradient(135deg,var(--y50),#FFF7ED);border:1px solid var(--y200)}
+.cs-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.cs-label{font-size:13px;color:var(--s600)}
+.cs-val{font-size:13px;font-weight:600;color:var(--s800)}
+.cs-total{border-top:1px dashed var(--y300);margin-top:8px;padding-top:10px}
+.cs-total .cs-label{font-size:15px;font-weight:700;color:var(--s800)}
+.cs-total .cs-val{font-size:20px;font-weight:800;color:var(--g700)}
+
+.cart-breakdown{padding:0 16px 16px}
+.cb-title{font-size:12px;font-weight:700;color:var(--s400);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.cb-market{padding:12px;background:#fff;border-radius:var(--radius-sm);margin-bottom:6px;box-shadow:var(--shadow)}
+.cb-market-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.cb-market-name{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--s800)}
+.cb-market-dot{width:10px;height:10px;border-radius:50%}
+.cb-market-count{font-size:12px;color:var(--s400)}
+.cb-market-total{font-size:16px;font-weight:800;color:var(--s800)}
+.cb-market-items{font-size:12px;color:var(--s500);margin-top:4px;line-height:1.4}
+
+/* BOTTOM NAV */
+.bottom-nav{flex-shrink:0;background:#fff;border-top:1px solid var(--s200);padding:8px 16px calc(8px + env(safe-area-inset-bottom,0));display:flex;gap:8px}
+.bn-btn{flex:1;height:48px;border-radius:var(--radius);border:none;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;font-family:inherit}
+.bn-btn:active{transform:scale(0.97)}
+.bn-primary{background:var(--y400);color:var(--s900)}
+.bn-secondary{background:var(--s100);color:var(--s700)}
+
+/* QUICK CATEGORIES */
+.quick-cats{display:flex;gap:6px;padding:6px 20px 12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.quick-cats::-webkit-scrollbar{display:none}
+.qc{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--s200);background:#fff;color:var(--s600);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;user-select:none}
+.qc:active{transform:scale(0.95)}
+.qc.active{background:var(--s900);color:#fff;border-color:var(--s900)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.p-card{animation:fadeUp .35s ease both}
+.p-card:nth-child(2){animation-delay:.04s}
+.p-card:nth-child(3){animation-delay:.08s}
+.p-card:nth-child(4){animation-delay:.12s}
+.p-card:nth-child(5){animation-delay:.16s}
+.p-card:nth-child(6){animation-delay:.2s}
+
+/* RESULT COUNT */
+.result-bar{padding:4px 20px 8px;display:flex;align-items:center;justify-content:space-between}
+.result-count{font-size:13px;font-weight:600;color:var(--s500)}
+.result-sort{font-size:12px;color:var(--y700);font-weight:600;background:var(--y50);padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:inherit}
+
+/* POPULAR SEARCHES */
+.pop-section{padding:20px}
+.pop-title{font-size:14px;font-weight:700;color:var(--s700);margin-bottom:12px}
+.pop-grid{display:flex;flex-wrap:wrap;gap:8px}
+.pop-chip{padding:8px 14px;border-radius:20px;background:#fff;border:1px solid var(--s200);font-size:13px;font-weight:500;color:var(--s600);cursor:pointer;transition:all .15s}
+.pop-chip:active{background:var(--y50);border-color:var(--y300)}
+
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s900);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- MAIN VIEW -->
+  <div class="main-view" id="mainView">
+    <div class="header">
+      <div class="header-row">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="13" rx="2" fill="#FBBF24"/><path d="M8 7V5a4 4 0 018 0v2" stroke="#FBBF24" stroke-width="2" stroke-linecap="round"/><path d="M10 12h4M12 10v4" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="brand-name">Sarı Etiket</span>
+        </div>
+        <div class="header-btns">
+          <button class="h-btn" onclick="showCart()" id="cartBtn">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Ne aramıştınız? (süt, ekmek, domates...)" enterkeyhint="search">
+        <button class="search-btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="content" id="mainContent">
+      <!-- MARKETS -->
+      <div class="markets-section">
+        <div class="sec-label">Marketler</div>
+        <div class="market-scroll" id="marketScroll"></div>
+      </div>
+
+      <!-- QUICK CATEGORIES -->
+      <div class="quick-cats" id="quickCats"></div>
+
+      <!-- RESULTS -->
+      <div id="resultsArea">
+        <div class="pop-section" id="popSection">
+          <div class="pop-title">Popüler aramalar</div>
+          <div class="pop-grid" id="popGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bn-btn bn-secondary" onclick="showCart()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Sepetim (<span id="cartCount1">0</span>)
+      </button>
+      <button class="bn-btn bn-primary" onclick="showCart()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Karşılaştır
+      </button>
+    </div>
+  </div>
+
+  <!-- CART VIEW -->
+  <div class="cart-view" id="cartView">
+    <div class="cart-header">
+      <button class="cart-back" onclick="hideCart()">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        Alışveriş Sepeti
+      </button>
+    </div>
+    <div class="cart-content" id="cartContent"></div>
+    <div class="bottom-nav">
+      <button class="bn-btn bn-secondary" onclick="hideCart()">Ürün ekle</button>
+      <button class="bn-btn bn-primary" onclick="saveList()">Listeyi paylaş</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://api.marketfiyati.org.tr/api/v2';
+const LAT = 41.0082;
+const LNG = 28.9784;
+
+const MARKETS_META = {
+  'A101': {color:'#E53935',abbr:'A101'},
+  'BİM': {color:'#1565C0',abbr:'BİM'},
+  'ŞOK': {color:'#E65100',abbr:'ŞOK'},
+  'Migros': {color:'#FF6F00',abbr:'MIG'},
+  'CarrefourSA': {color:'#004E98',abbr:'CSA'},
+  'Tarım Kredi': {color:'#2E7D32',abbr:'TK'},
+  'Hakmar': {color:'#6A1B9A',abbr:'HKM'},
+};
+
+const CATEGORIES = ['Tümü','Meyve','Sebze','Süt','Et','İçecek','Temizlik','Atıştırmalık'];
+const POPULAR = ['Süt','Ekmek','Yumurta','Domates','Peynir','Tavuk','Makarna','Pirinç','Ayçiçek yağı','Deterjan','Şeker','Un'];
+const EMOJIS = {'süt':'🥛','ekmek':'🍞','yumurta':'🥚','domates':'🍅','peynir':'🧀','tavuk':'🍗','makarna':'🍝','pirinç':'🍚','ayçiçek':'🫒','yağ':'🫒','deterjan':'🧴','şeker':'🍬','un':'🌾','elma':'🍎','muz':'🍌','portakal':'🍊','salatalık':'🥒','biber':'🌶️','patates':'🥔','soğan':'🧅','havuç':'🥕','su':'💧','çay':'🍵','kahve':'☕','şampuan':'🧴','sabun':'🧼','balık':'🐟','et':'🥩','kıyma':'🥩','yogurt':'🥛','yoğurt':'🥛','tereyağ':'🧈','zeytin':'🫒','bal':'🍯','reçel':'🍓','sucuk':'🌭','sosis':'🌭','çikolata':'🍫','bisküvi':'🍪','cips':'🥔','dondurma':'🍦','meyve':'🍎','sebze':'🥬','içecek':'🥤','default':'🛒'};
+
+let state = {
+  products: [],
+  cart: [],
+  activeMarket: 'all',
+  activeCat: 'Tümü',
+  expandedId: null,
+  searchTerm: '',
+  loading: false,
+  searched: false
+};
+
+function getEmoji(name) {
+  const n = name.toLowerCase();
+  for (const [k,v] of Object.entries(EMOJIS)) {
+    if (n.includes(k)) return v;
+  }
+  return EMOJIS.default;
+}
+
+function formatPrice(p) {
+  return parseFloat(p).toFixed(2).replace('.',',') + ' ₺';
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function renderMarkets() {
+  const el = document.getElementById('marketScroll');
+  let html = `<div class="market-card all-card ${state.activeMarket==='all'?'active':''}" onclick="setMarket('all')">
+    <div class="m-logo" style="background:var(--s900);font-size:16px">✦</div>
+    <div class="m-label">Tümü</div>
+  </div>`;
+  for (const [name, meta] of Object.entries(MARKETS_META)) {
+    html += `<div class="market-card ${state.activeMarket===name?'active':''}" onclick="setMarket('${name}')">
+      <div class="m-logo" style="background:${meta.color}">${meta.abbr}</div>
+      <div class="m-label">${name}</div>
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderCategories() {
+  const el = document.getElementById('quickCats');
+  el.innerHTML = CATEGORIES.map(c => 
+    `<div class="qc ${state.activeCat===c?'active':''}" onclick="setCat('${c}')">${c}</div>`
+  ).join('');
+}
+
+function renderPopular() {
+  document.getElementById('popGrid').innerHTML = POPULAR.map(p => 
+    `<div class="pop-chip" onclick="quickSearch('${p}')">${getEmoji(p.toLowerCase())} ${p}</div>`
+  ).join('');
+}
+
+function renderProducts() {
+  const area = document.getElementById('resultsArea');
+  
+  if (state.loading) {
+    area.innerHTML = `<div class="loading"><div class="spinner"></div><div class="loading-text">Marketler taranıyor...</div></div>`;
+    return;
+  }
+  
+  if (!state.searched) {
+    area.innerHTML = `<div class="pop-section"><div class="pop-title">Popüler aramalar</div><div class="pop-grid" id="popGrid"></div></div>`;
+    renderPopular();
+    return;
+  }
+  
+  let prods = state.products;
+  
+  if (prods.length === 0) {
+    area.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Ürün bulunamadı</div><div class="empty-desc">Farklı bir arama terimi deneyin veya popüler aramalardan seçin.</div></div>`;
+    return;
+  }
+
+  const count = prods.length;
+  let html = `<div class="result-bar"><span class="result-count">${count} ürün bulundu</span></div>`;
+  html += `<div class="product-grid">`;
+  
+  prods.forEach((p, i) => {
+    const prices = p.prices || [];
+    let filteredPrices = prices;
+    if (state.activeMarket !== 'all') {
+      filteredPrices = prices.filter(pr => pr.marketName && pr.marketName.includes(state.activeMarket));
+    }
+    if (filteredPrices.length === 0 && state.activeMarket !== 'all') return;
+    
+    const activePrices = filteredPrices.length > 0 ? filteredPrices : prices;
+    const sorted = [...activePrices].sort((a,b) => a.price - b.price);
+    const best = sorted[0];
+    const worst = sorted[sorted.length - 1];
+    const expanded = state.expandedId === p.id;
+    const inCart = state.cart.find(c => c.id === p.id);
+    const emoji = getEmoji(p.name || '');
+    const bestMarketName = best ? (best.marketName || best.chainName || '—') : '—';
+    const bestMarketMeta = Object.entries(MARKETS_META).find(([k]) => bestMarketName.includes(k));
+    
+    html += `<div class="p-card ${expanded?'expanded':''}" onclick="toggleExpand('${p.id}')">
+      <div class="p-head">
+        <div class="p-img">${emoji}</div>
+        <div class="p-info">
+          <div class="p-name">${p.name || 'Ürün'}</div>
+          <div class="p-sub">${p.brand || ''} ${p.quantity || ''}</div>
+        </div>
+        <div class="p-price-col">
+          <div class="p-best">${best ? formatPrice(best.price) : '—'}</div>
+          <div class="p-best-market" style="color:${bestMarketMeta ? bestMarketMeta[1].color : 'var(--g600)'}">${bestMarketName.split(' ')[0]}</div>
+          ${sorted.length > 1 ? `<div class="p-range">${formatPrice(sorted[0].price)} — ${formatPrice(worst.price)}</div>` : ''}
+        </div>
+        <button class="p-add ${inCart?'added':''}" onclick="event.stopPropagation();toggleCart('${p.id}')">${inCart?'✓':'+'}</button>
+      </div>
+      ${expanded ? `<div class="price-panel"><div class="price-grid">${sorted.map(pr => {
+        const mn = pr.marketName || pr.chainName || '?';
+        const shortName = mn.split(' ')[0];
+        const meta = Object.entries(MARKETS_META).find(([k]) => mn.includes(k));
+        const isBest = pr.price === best.price;
+        const diff = pr.price - best.price;
+        return `<div class="pg-item ${isBest?'best':''}">
+          <div class="pg-market" style="color:${meta?meta[1].color:'var(--s500)'}">${shortName}</div>
+          <div class="pg-price">${formatPrice(pr.price)}</div>
+          <div class="pg-diff">${isBest ? 'En ucuz' : '+'+formatPrice(diff)}</div>
+        </div>`;
+      }).join('')}</div></div>` : ''}
+    </div>`;
+  });
+  
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function updateCartBadge() {
+  const n = state.cart.length;
+  document.getElementById('cartCount1').textContent = n;
+  const btn = document.getElementById('cartBtn');
+  const existing = btn.querySelector('.cart-badge');
+  if (existing) existing.remove();
+  if (n > 0) {
+    const badge = document.createElement('span');
+    badge.className = 'cart-badge';
+    badge.textContent = n;
+    btn.appendChild(badge);
+  }
+}
+
+async function searchProducts(keyword) {
+  state.loading = true;
+  state.searched = true;
+  state.searchTerm = keyword;
+  state.expandedId = null;
+  renderProducts();
+  
+  try {
+    const url = `${API}/search?keywords=${encodeURIComponent(keyword)}&latitude=${LAT}&longitude=${LNG}&size=30`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    
+    let products = [];
+    if (data && data.data) {
+      products = Array.isArray(data.data) ? data.data : (data.data.products || data.data.items || []);
+    } else if (Array.isArray(data)) {
+      products = data;
+    } else if (data.products) {
+      products = data.products;
+    } else if (data.items) {
+      products = data.items;
+    }
+    
+    // Normalize product data
+    state.products = products.map(p => {
+      let prices = [];
+      if (p.prices && Array.isArray(p.prices)) {
+        prices = p.prices;
+      } else if (p.marketPrices && Array.isArray(p.marketPrices)) {
+        prices = p.marketPrices;
+      } else if (p.stores && Array.isArray(p.stores)) {
+        prices = p.stores.map(s => ({
+          price: s.price || s.salePrice || 0,
+          marketName: s.marketName || s.chainName || s.storeName || s.name || '',
+          chainName: s.chainName || ''
+        }));
+      }
+      
+      return {
+        id: p.id || p.productId || p.barcode || Math.random().toString(36).substr(2),
+        name: p.name || p.productName || p.title || '',
+        brand: p.brand || p.brandName || '',
+        quantity: p.quantity || p.unit || p.size || '',
+        image: p.image || p.imageUrl || p.img || '',
+        prices: prices
+      };
+    }).filter(p => p.name && p.prices.length > 0);
+    
+  } catch(err) {
+    console.error('Search error:', err);
+    // Fallback: try alternative endpoint patterns
+    try {
+      const url2 = `${API}/products/search?keywords=${encodeURIComponent(keyword)}&latitude=${LAT}&longitude=${LNG}&size=30`;
+      const res2 = await fetch(url2);
+      if (res2.ok) {
+        const data2 = await res2.json();
+        state.products = normalizeResponse(data2);
+      }
+    } catch(e2) {
+      console.error('Fallback search error:', e2);
+      state.products = [];
+    }
+  }
+  
+  state.loading = false;
+  renderProducts();
+}
+
+function normalizeResponse(data) {
+  let items = [];
+  if (Array.isArray(data)) items = data;
+  else if (data?.data) items = Array.isArray(data.data) ? data.data : [];
+  else if (data?.products) items = data.products;
+  else if (data?.items) items = data.items;
+  else if (data?.content) items = Array.isArray(data.content) ? data.content : [];
+  
+  return items.map(p => {
+    let prices = p.prices || p.marketPrices || [];
+    if (p.stores) {
+      prices = p.stores.map(s => ({
+        price: s.price || s.salePrice || 0,
+        marketName: s.marketName || s.chainName || s.name || '',
+      }));
+    }
+    return {
+      id: p.id || p.productId || Math.random().toString(36).substr(2),
+      name: p.name || p.productName || '',
+      brand: p.brand || '',
+      quantity: p.quantity || p.unit || '',
+      prices
+    };
+  }).filter(p => p.name);
+}
+
+function doSearch() {
+  const val = document.getElementById('searchInput').value.trim();
+  if (val) searchProducts(val);
+}
+
+function quickSearch(term) {
+  document.getElementById('searchInput').value = term;
+  searchProducts(term);
+  document.getElementById('mainContent').scrollTo({top:0, behavior:'smooth'});
+}
+
+function setMarket(m) {
+  state.activeMarket = m;
+  renderMarkets();
+  renderProducts();
+}
+
+function setCat(c) {
+  state.activeCat = c;
+  renderCategories();
+  if (c === 'Tümü' && state.searchTerm) {
+    searchProducts(state.searchTerm);
+  } else if (c !== 'Tümü') {
+    searchProducts(c);
+  }
+}
+
+function toggleExpand(id) {
+  state.expandedId = state.expandedId === id ? null : id;
+  renderProducts();
+}
+
+function toggleCart(id) {
+  const idx = state.cart.findIndex(c => c.id === id);
+  if (idx > -1) {
+    state.cart.splice(idx, 1);
+    toast('Ürün sepetten çıkarıldı');
+  } else {
+    const prod = state.products.find(p => p.id === id);
+    if (prod) {
+      state.cart.push({...prod});
+      toast('Ürün sepete eklendi ✓');
+    }
+  }
+  updateCartBadge();
+  renderProducts();
+}
+
+function removeFromCart(id) {
+  state.cart = state.cart.filter(c => c.id !== id);
+  updateCartBadge();
+  renderCart();
+}
+
+function showCart() {
+  document.getElementById('mainView').classList.add('hide');
+  document.getElementById('cartView').classList.add('show');
+  renderCart();
+}
+
+function hideCart() {
+  document.getElementById('mainView').classList.remove('hide');
+  document.getElementById('cartView').classList.remove('show');
+}
+
+function renderCart() {
+  const el = document.getElementById('cartContent');
+  
+  if (state.cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <div class="cart-empty-text">Sepetiniz boş</div>
+      <div class="cart-empty-sub">Karşılaştırmak istediğiniz ürünleri<br>ekleyerek ne kadar tasarruf edeceğinizi görün.</div>
+      <button class="cart-go-btn" onclick="hideCart()">Ürünlere göz at →</button>
+    </div>`;
+    return;
+  }
+
+  let totalBest = 0, totalWorst = 0;
+  const byMarket = {};
+
+  state.cart.forEach(item => {
+    const prices = item.prices || [];
+    if (prices.length === 0) return;
+    const sorted = [...prices].sort((a,b) => a.price - b.price);
+    const best = sorted[0];
+    const worst = sorted[sorted.length - 1];
+    totalBest += best.price;
+    totalWorst += worst.price;
+    
+    const mName = best.marketName || best.chainName || 'Bilinmiyor';
+    const key = mName.split(' ')[0];
+    if (!byMarket[key]) byMarket[key] = {name: mName, items:[], total:0};
+    byMarket[key].items.push(item);
+    byMarket[key].total += best.price;
+  });
+
+  const saved = totalWorst - totalBest;
+
+  let html = `<div class="cart-items">`;
+  state.cart.forEach(item => {
+    const prices = item.prices || [];
+    const sorted = [...prices].sort((a,b) => a.price - b.price);
+    const best = sorted[0];
+    const mName = best ? (best.marketName || best.chainName || '') : '';
+    const meta = Object.entries(MARKETS_META).find(([k]) => mName.includes(k));
+    
+    html += `<div class="ci">
+      <span class="ci-emoji">${getEmoji(item.name)}</span>
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-market">En ucuz: <strong style="color:${meta?meta[1].color:'var(--g600)'}">${mName.split(' ')[0]}</strong></div>
+      </div>
+      <span class="ci-price">${best ? formatPrice(best.price) : '—'}</span>
+      <button class="ci-del" onclick="removeFromCart('${item.id}')">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>`;
+  });
+  html += '</div>';
+
+  html += `<div class="cart-summary">
+    <div class="cs-row"><span class="cs-label">En pahalı seçimler</span><span class="cs-val" style="text-decoration:line-through;color:var(--r500)">${formatPrice(totalWorst)}</span></div>
+    <div class="cs-row"><span class="cs-label">En ucuz seçimler</span><span class="cs-val" style="color:var(--g600)">${formatPrice(totalBest)}</span></div>
+    ${saved > 0 ? `<div class="cs-row cs-total"><span class="cs-label">Tasarruf</span><span class="cs-val">${formatPrice(saved)} 🎉</span></div>` : ''}
+  </div>`;
+
+  const marketEntries = Object.entries(byMarket);
+  if (marketEntries.length > 0) {
+    html += `<div class="cart-breakdown"><div class="cb-title">Markete göre dağılım</div>`;
+    marketEntries.forEach(([key, data]) => {
+      const meta = Object.entries(MARKETS_META).find(([k]) => data.name.includes(k));
+      html += `<div class="cb-market">
+        <div class="cb-market-head">
+          <div class="cb-market-name">
+            <span class="cb-market-dot" style="background:${meta?meta[1].color:'var(--s400)'}"></span>
+            ${key} <span class="cb-market-count">(${data.items.length} ürün)</span>
+          </div>
+          <span class="cb-market-total">${formatPrice(data.total)}</span>
+        </div>
+        <div class="cb-market-items">${data.items.map(i => getEmoji(i.name) + ' ' + i.name).join(' · ')}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+function saveList() {
+  if (state.cart.length === 0) { toast('Sepetiniz boş'); return; }
+  let text = '🏷️ Sarı Etiket — Alışveriş Listem\n\n';
+  state.cart.forEach(item => {
+    const sorted = [...(item.prices||[])].sort((a,b)=>a.price-b.price);
+    const best = sorted[0];
+    text += `${getEmoji(item.name)} ${item.name} — ${best?formatPrice(best.price):'—'} (${best?(best.marketName||'').split(' ')[0]:''})\n`;
+  });
+  
+  if (navigator.share) {
+    navigator.share({title:'Sarı Etiket Alışveriş Listem', text});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+    toast('Liste kopyalandı ✓');
+  } else {
+    toast('Liste hazır');
+  }
+}
+
+// INIT
+function init() {
+  renderMarkets();
+  renderCategories();
+  renderPopular();
+  updateCartBadge();
+
+  const input = document.getElementById('searchInput');
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+  
+  // Auto-search on type with debounce
+  let timer;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const val = input.value.trim();
+    if (val.length >= 2) {
+      timer = setTimeout(() => searchProducts(val), 600);
+    } else if (val.length === 0) {
+      state.searched = false;
+      state.products = [];
+      renderProducts();
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
